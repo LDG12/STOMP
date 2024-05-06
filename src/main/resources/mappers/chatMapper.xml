@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.ws.model.dao.ChatDao">
+	<resultMap type="chatRoom" id="chatRoomBasic">
+		<result column="roomId"  property="roomId"/>
+		<result column="name"  property="name" />
+	</resultMap>
+	
+	<resultMap type="chatMessage" id="chatMessageBasic">
+		<result column="roomId"  property="roomId"  />
+		<result column="sender"  property="sender"  />
+		<result column="message"  property="message"  />
+		<result column="chat_date"  property="messageDate"  />
+	</resultMap>
+	
+	<select id="selectAllRoom" resultMap="chatRoomBasic">
+		select * from chatRoom
+	</select>
+	
+	<select id="findRoomById" parameterType="String" resultMap="chatRoomBasic">
+		select * from chatroom where roomId = #{roomId}
+	</select>
+	
+	<insert id="insert" parameterType="chatRoom">
+		insert into chatRoom(roomId, name) values(#{roomId}, #{name})
+	</insert>
+	
+	<insert id="insertMessage" parameterType="chatMessage">
+		insert into chatmessage(roomId, sender, message, chat_date)
+		values(#{roomId}, #{sender}, #{message}, #{messageDate})
+	</insert>
+	
+	<select id="bringPrevMessage" parameterType="Map" resultMap="chatMessageBasic">
+		select * from chatmessage
+		where roomId = #{roomId} and chat_date &gt;= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+	</select>
+</mapper>
